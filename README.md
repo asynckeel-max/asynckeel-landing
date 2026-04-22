@@ -2,6 +2,11 @@
 
 Marketing landing page for [AsyncKeel](https://github.com/asynckeel-max/asynckeel-core) — a production-ready FastAPI boilerplate for indie developers.
 
+## Current Positioning
+- Beta status: collecting early-bird waitlist signups
+- Pricing: Indie only
+- Early-bird: $49 one-time for first 100 signups (regular price $79 after beta)
+
 ## Tech Stack
 - [Astro](https://astro.build) — Static site framework
 - [Tailwind CSS](https://tailwindcss.com) — Utility-first CSS

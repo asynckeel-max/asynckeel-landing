@@ -77,20 +77,22 @@ const waitlistApiUrl = import.meta.env.PUBLIC_WAITLIST_API_URL || '/api/waitlist
 
         const position = Number(payload.position);
         const earlyBird = Boolean(payload.earlyBird);
+        const tag = typeof payload.tag === 'string' ? payload.tag : null;
 
         let message = "You're on the list.";
         if (Number.isFinite(position) && position > 0) {
           message += ` You're #${position}.`;
         }
         message += earlyBird
-          ? ' Early-bird is locked in (earlybird-49).'
+          ? ` Early-bird is locked in${tag ? ` (${tag})` : ''}.`
           : ' Early-bird pricing is full; you are on the beta waitlist.';
 
         feedback.className = 'mt-4 text-sm text-green-300';
         feedback.textContent = message;
         feedback.classList.remove('hidden');
         form.reset();
-      } catch {
+      } catch (error) {
+        console.error('Waitlist submission failed', error);
         feedback.className = 'mt-4 text-sm text-red-300';
         feedback.textContent = 'Something went wrong. Please try again in a moment.';
         feedback.classList.remove('hidden');

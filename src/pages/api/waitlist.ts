@@ -13,9 +13,10 @@ type WaitlistStorage = {
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const EARLY_BIRD_LIMIT = 100;
+const EARLY_BIRD_TAG = 'earlybird-49';
 
 declare global {
-  var __asynckeelWaitlistStore: WaitlistEntry[] | undefined;
+  var _asynckeelWaitlistStore: WaitlistEntry[] | undefined;
 }
 
 const getStorage = (): WaitlistStorage => {
@@ -40,14 +41,14 @@ const getStorage = (): WaitlistStorage => {
     };
   }
 
-  if (!globalThis.__asynckeelWaitlistStore) {
-    globalThis.__asynckeelWaitlistStore = [];
+  if (!globalThis._asynckeelWaitlistStore) {
+    globalThis._asynckeelWaitlistStore = [];
   }
 
   return {
     async signUp(email) {
       const normalizedEmail = email.toLowerCase();
-      const records = globalThis.__asynckeelWaitlistStore!;
+      const records = globalThis._asynckeelWaitlistStore!;
       const exists = records.some((entry) => entry.email === normalizedEmail);
 
       if (!exists) {
@@ -103,7 +104,7 @@ export const POST: APIRoute = async ({ request }) => {
     ok: true,
     position,
     earlyBird,
-    tag: earlyBird ? 'earlybird-49' : null,
+    tag: earlyBird ? EARLY_BIRD_TAG : null,
   });
 };
 

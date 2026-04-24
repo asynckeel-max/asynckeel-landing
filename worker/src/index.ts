@@ -105,11 +105,14 @@ export default {
       }
 
       // Insert or ignore duplicate, then fetch position
-      await env.DB.prepare(
+      const insertResult = await env.DB.prepare(
         'INSERT OR IGNORE INTO waitlist (email) VALUES (?)',
       )
         .bind(normalizedEmail)
         .run();
+
+      // changes === 0 means the email already existed (INSERT OR IGNORE skipped)
+      const alreadyOnList = insertResult.meta.changes === 0;
 
       const row = await env.DB.prepare(
         'SELECT id FROM waitlist WHERE email = ?',
@@ -123,6 +126,7 @@ export default {
       return json(
         {
           ok: true,
+          ...(alreadyOnList && { alreadyOnList: true }),
           position,
           earlyBird,
           tag: earlyBird ? EARLY_BIRD_TAG : null,

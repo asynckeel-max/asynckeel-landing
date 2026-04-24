@@ -89,6 +89,13 @@ const waitlistApiUrl = import.meta.env.PUBLIC_WAITLIST_API_URL || '/api/waitlist
           throw new Error(payload?.error || 'Request failed');
         }
 
+        if (payload.alreadyOnList) {
+          feedback.className = 'mt-4 text-sm text-green-300';
+          feedback.textContent = 'You\u2019re already on the list.';
+          feedback.classList.remove('hidden');
+          return;
+        }
+
         const position = Number(payload.position);
         const earlyBird = Boolean(payload.earlyBird);
         const tag = typeof payload.tag === 'string' ? payload.tag : null;

@@ -18,7 +18,8 @@ function isAllowedOrigin(origin: string | null): boolean {
   return (
     origin === 'https://asynckeel.com' ||
     origin === 'https://www.asynckeel.com' ||
-    origin.endsWith('.vercel.app')
+    // Allow Vercel preview deploys; require https:// to avoid http:// spoofing
+    (origin.startsWith('https://') && origin.endsWith('.vercel.app'))
   );
 }
 
@@ -74,6 +75,13 @@ export default {
       return new Response(null, { status: 204, headers: corsHeaders(origin) });
     }
 
+    // Enforce Origin allowlist for browser requests.
+    // Requests without an Origin header (e.g. curl or server-to-server) are allowed through;
+    // CORS is a browser-only mechanism and blocking headless clients is done elsewhere.
+    if (origin !== null && !isAllowedOrigin(origin)) {
+      return json({ ok: false, error: 'Forbidden' }, 403, origin);
+    }
+
     // GET /health
     if (request.method === 'GET' && url.pathname === '/health') {
       return json({ ok: true }, 200, origin);
@@ -81,6 +89,12 @@ export default {
 
     // POST /waitlist
     if (request.method === 'POST' && url.pathname === '/waitlist') {
+      // Require application/json to reject form-encoded submissions and other unexpected clients
+      const contentType = request.headers.get('Content-Type') ?? '';
+      if (!contentType.includes('application/json')) {
+        return json({ ok: false, error: 'Unsupported Media Type' }, 415, origin);
+      }
+
       // Rate limit check
       if (isRateLimited(ip)) {
         return json({ ok: false, error: 'Too many requests. Please try again later.' }, 429, origin);

@@ -1,0 +1,12 @@
+name = "asynckeel-waitlist-worker"
+main = "src/index.ts"
+compatibility_date = "2025-04-01"
+compatibility_flags = ["nodejs_compat"]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "asynckeel_waitlist"
+# Replace the placeholder below with the actual database_id returned by:
+#   npx wrangler d1 create asynckeel_waitlist
+# The id looks like: "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+database_id = "YOUR_DATABASE_ID_HERE"

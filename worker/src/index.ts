@@ -1,4 +1,6 @@
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+// Each domain label is restricted to [^\s@.] so there is no ambiguity for the
+// regex engine to exploit, avoiding polynomial backtracking (ReDoS).
+const EMAIL_REGEX = /^[^\s@]+@[^\s@.]+(?:\.[^\s@.]+)+$/;
 const EARLY_BIRD_LIMIT = 100;
 const EARLY_BIRD_TAG = 'earlybird-49';
 

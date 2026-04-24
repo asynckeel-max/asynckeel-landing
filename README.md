@@ -20,11 +20,24 @@ npm run dev
 
 ## Waitlist Backend
 
-- The landing form posts to `PUBLIC_WAITLIST_API_URL` if configured.
-- If `PUBLIC_WAITLIST_API_URL` is not set, it posts to the built-in Astro endpoint: `/api/waitlist`.
-- `POST /api/waitlist` returns waitlist `position`, `earlyBird`, and `tag` (`earlybird-49` for first 100 signups).
+The landing form posts to `PUBLIC_WAITLIST_API_URL` if the env var is set, and falls back to the built-in Astro endpoint `/api/waitlist` for local development only.
 
-Optional local persistence for development:
+### Production (Cloudflare Worker + D1)
+
+**In production, you must set `PUBLIC_WAITLIST_API_URL`** to the deployed Cloudflare Worker URL. The built-in Astro endpoint uses in-memory storage and is not suitable for production.
+
+See [`worker/README.md`](./worker/README.md) for full setup instructions, including:
+- Creating the D1 database
+- Applying the schema
+- Deploying the Worker
+- Configuring a custom domain (`api.asynckeel.com`)
+- Setting `PUBLIC_WAITLIST_API_URL` in Vercel
+
+### Local development
+
+If `PUBLIC_WAITLIST_API_URL` is not set, forms post to `/api/waitlist` (Astro endpoint).
+
+Optional local persistence:
 
 ```bash
 WAITLIST_STORAGE_FILE=.data/waitlist.json npm run dev

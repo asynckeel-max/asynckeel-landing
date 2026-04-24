@@ -16,6 +16,16 @@ const waitlistApiUrl = import.meta.env.PUBLIC_WAITLIST_API_URL || '/api/waitlist
       method="post"
       data-api-url={waitlistApiUrl}
     >
+      <!-- Honeypot: hidden from humans; bots fill it and are silently rejected -->
+      <input
+        id="company"
+        name="company"
+        type="text"
+        autocomplete="off"
+        tabindex="-1"
+        aria-hidden="true"
+        style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden;"
+      />
       <label for="email" class="sr-only">Email address</label>
       <input
         id="email"
@@ -43,6 +53,7 @@ const waitlistApiUrl = import.meta.env.PUBLIC_WAITLIST_API_URL || '/api/waitlist
 
   if (form instanceof HTMLFormElement && feedback instanceof HTMLParagraphElement) {
     const emailInput = form.querySelector('#email');
+    const honeypotInput = form.querySelector('#company');
     const submitButton = form.querySelector('button[type="submit"]');
     const defaultButtonText = submitButton?.textContent ?? 'Get Early-Bird Access';
 
@@ -66,7 +77,10 @@ const waitlistApiUrl = import.meta.env.PUBLIC_WAITLIST_API_URL || '/api/waitlist
         const response = await fetch(form.dataset.apiUrl || form.action, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email }),
+          body: JSON.stringify({
+            email,
+            company: honeypotInput instanceof HTMLInputElement ? honeypotInput.value : '',
+          }),
         });
 
         const payload = await response.json().catch(() => ({}));
